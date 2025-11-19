@@ -1,0 +1,287 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Roboto", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #202b5a 0, #050714 45%, #020309 100%);
+  color: #f5f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.app-bg {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+}
+
+.glow {
+  position: absolute;
+  filter: blur(40px);
+  opacity: 0.5;
+  z-index: -1;
+}
+.glow-top {
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: #3a8bff;
+}
+.glow-bottom {
+  bottom: -40px;
+  left: -40px;
+  width: 140px;
+  height: 140px;
+  background: #7b37ff;
+}
+
+.card {
+  background: rgba(5, 7, 20, 0.9);
+  border-radius: 24px;
+  padding: 20px 20px 24px;
+  border: 1px solid rgba(63, 78, 120, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+}
+
+.card-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #0b0f1c;
+  border: 1px solid #1a2235;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-circle span {
+  color: #3a8bff;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 700;
+}
+.subtitle {
+  font-size: 13px;
+  color: #8f9bb8;
+  margin-top: 2px;
+}
+
+/* FORM / LOGIN */
+
+.form {
+  margin-top: 8px;
+}
+
+.label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #1a2235;
+  background: #0b0f1c;
+  color: #f5f7ff;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.input::placeholder {
+  color: #56607a;
+}
+
+.btn-main {
+  width: 100%;
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3a8bff, #5c9dff);
+  color: #f5f7ff;
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(58, 139, 255, 0.5);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-main:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 18px rgba(58, 139, 255, 0.4);
+}
+
+.small-text {
+  font-size: 12px;
+}
+.center {
+  text-align: center;
+}
+.link {
+  color: #f5f7ff;
+  text-decoration: none;
+}
+
+/* DASHBOARD */
+
+.hidden {
+  display: none;
+}
+
+.welcome {
+  margin-bottom: 16px;
+}
+.welcome h2 {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.device-card {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #0b0f1c;
+  border: 1px solid #1a2235;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8f9bb8;
+}
+.device-card h3 {
+  font-size: 16px;
+  margin: 2px 0;
+}
+.device-status {
+  font-size: 12px;
+  color: #8f9bb8;
+}
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ff7e57;
+  margin-right: 4px;
+}
+
+.btn-outline {
+  border-radius: 999px;
+  padding: 8px 14px;
+  border: 1px solid #3a8bff;
+  background: transparent;
+  color: #f5f7ff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* CONFIG */
+
+.config {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(63, 78, 120, 0.4);
+}
+
+.config h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.field-group {
+  margin-bottom: 14px;
+}
+
+.chip-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  border-radius: 999px;
+  border: 1px solid #1a2235;
+  background: #050714;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #8f9bb8;
+  cursor: pointer;
+}
+.chip-active {
+  border-color: #3a8bff;
+  background: #162040;
+  color: #f5f7ff;
+}
+
+.muted {
+  color: #6e7693;
+}
+
+/* SWITCH (toggle) */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #22283a;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #f5f7ff;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: #3a8bff;
+}
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
