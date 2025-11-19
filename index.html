@@ -2,114 +2,90 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>SmartDrive Dashboard</title>
+  <title>SmartDrive</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="app-bg">
-    <div class="glow glow-top"></div>
-    <div class="glow glow-bottom"></div>
+  <main class="container">
 
-    <main class="card">
-      <!-- HEADER -->
-      <header class="card-header">
-        <div class="logo-circle">
-          <span>SD</span>
-        </div>
+    <!-- LOGO + TITULO -->
+    <header class="header">
+      <div class="logo-circle">
+        <span>SD</span>
+      </div>
+      <h1 class="title">SmartDrive</h1>
+      <p class="subtitle">Control y configuración elegante.</p>
+    </header>
+
+    <!-- LOGIN -->
+    <section id="login-screen" class="card">
+      <form onsubmit="return handleFakeLogin(event)">
+        <label class="label">Email</label>
+        <input type="email" class="input" placeholder="tuemail@example.com" required>
+
+        <label class="label">Contraseña</label>
+        <input type="password" class="input" placeholder="••••••••" required>
+
+        <button class="btn-primary">Iniciar sesión</button>
+
+        <p class="text-small center">
+          ¿No tenés cuenta?
+          <a href="#" class="link">Crear cuenta</a>
+        </p>
+      </form>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard-screen" class="hidden">
+
+      <h2 class="hello">Hola, Simón 👋</h2>
+
+      <div class="device-card">
         <div>
-          <h1>SmartDrive</h1>
-          <p class="subtitle">Controlá tu asistente desde un panel simple y elegante.</p>
-        </div>
-      </header>
-
-      <!-- LOGIN SCREEN -->
-      <section id="login-screen">
-        <form class="form" onsubmit="return handleFakeLogin(event)">
-          <label class="label">Email</label>
-          <input
-            type="email"
-            class="input"
-            placeholder="tuemail@example.com"
-            required
-          />
-
-          <label class="label">Contraseña</label>
-          <input
-            type="password"
-            class="input"
-            placeholder="••••••••"
-            required
-          />
-
-          <button type="submit" class="btn-main">Iniciar sesión</button>
-          <p class="small-text center">
-            ¿No tenés cuenta?
-            <a href="#" class="link">Crear cuenta</a>
+          <p class="device-label">Tu dispositivo</p>
+          <h3 class="device-name">SmartDrive del auto</h3>
+          <p class="device-status">
+            Estado: <span class="status-dot offline"></span> Sin conectar
           </p>
-        </form>
-      </section>
+        </div>
+        <button class="btn-secondary" onclick="openConfig()">Configurar</button>
+      </div>
 
-      <!-- DASHBOARD SCREEN (oculta al principio) -->
-      <section id="dashboard-screen" class="hidden">
-        <div class="welcome">
-          <h2>Hola, Simón 👋</h2>
-          <p class="subtitle">Gestioná la configuración de tu SmartDrive.</p>
+      <!-- CONFIGURACION -->
+      <div id="config-section" class="card hidden">
+        <h3 class="section-title">Configuración</h3>
+
+        <label class="label">Idioma</label>
+        <div class="chip-row">
+          <button class="chip chip-active" data-lang="es-AR" onclick="selectLang(event)">Español</button>
+          <button class="chip" data-lang="en-US" onclick="selectLang(event)">Inglés</button>
         </div>
 
-        <div class="device-card">
-          <div>
-            <p class="device-label">Tu dispositivo</p>
-            <h3>SmartDrive del auto</h3>
-            <p class="device-status">Estado: <span class="status-dot"></span> Sin conectar</p>
-          </div>
-          <button class="btn-outline" onclick="openConfig()">
-            Configurar
-          </button>
-        </div>
+        <label class="label">Modo conducción segura</label>
+        <label class="switch">
+          <input type="checkbox" id="modo-conduccion" checked>
+          <span class="slider"></span>
+        </label>
 
-        <section id="config-section" class="config hidden">
-          <h3>Configuración de SmartDrive</h3>
+        <label class="label">Volumen</label>
+        <input type="range" id="volumen" min="0" max="100" value="70">
+        <p class="text-small">Valor: <span id="volumen-valor">70</span></p>
 
-          <div class="field-group">
-            <label class="label">Idioma</label>
-            <div class="chip-row">
-              <button class="chip chip-active" data-lang="es-AR" onclick="selectLang(event)">Español</button>
-              <button class="chip" data-lang="en-US" onclick="selectLang(event)">Inglés</button>
-            </div>
-          </div>
+        <label class="label">WiFi / Hotspot</label>
+        <input type="text" id="wifi-ssid" class="input" placeholder="Nombre de red (SSID)">
+        <input type="password" id="wifi-pass" class="input" placeholder="Contraseña">
 
-          <div class="field-group">
-            <label class="label">Modo conducción seguro</label>
-            <label class="switch">
-              <input type="checkbox" id="modo-conduccion" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
+        <button class="btn-primary" onclick="saveConfig()">Guardar configuración</button>
 
-          <div class="field-group">
-            <label class="label">Volumen</label>
-            <input type="range" id="volumen" min="0" max="100" value="70" />
-            <p class="small-text">Valor: <span id="volumen-valor">70</span></p>
-          </div>
+      </div>
 
-          <div class="field-group">
-            <label class="label">WiFi / Hotspot</label>
-            <input type="text" id="wifi-ssid" class="input" placeholder="Nombre de la red (SSID)" />
-            <input type="password" id="wifi-pass" class="input" placeholder="Contraseña" />
-          </div>
+    </section>
 
-          <button class="btn-main" onclick="saveConfig()">
-            Guardar configuración (demo)
-          </button>
-          <p class="small-text muted">
-            Por ahora solo se guarda en el navegador. Más adelante lo conectamos a Firebase y al dispositivo real.
-          </p>
-        </section>
-      </section>
-    </main>
-  </div>
+  </main>
 
   <script src="app.js"></script>
+
 </body>
 </html>
