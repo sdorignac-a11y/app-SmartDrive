@@ -45,8 +45,9 @@
     canvas {
       border-radius: 0.75rem;
       border: 1px solid rgba(148,163,184,0.4);
-      background: radial-gradient(circle at top, #1f2937, #020617);
       touch-action: manipulation;
+      /* el mapa va a tapar el fondo, esto es solo backup */
+      background: #000;
     }
     .info {
       font-size: 0.9rem;
@@ -97,7 +98,6 @@
 
   <div class="wrapper">
     <div id="canvasContainer">
-      <!-- Podés cambiar el tamaño si querés -->
       <canvas id="mapCanvas" width="600" height="600"></canvas>
     </div>
 
@@ -123,40 +123,19 @@
     let spot = null;
 
     // === Mapa real de Fortnite ===
-const img = new Image();
-img.src = "mapa.png"; // << tu imagen del mapa
-img.onload = () => {
-  dibujarOverlay();  // Redibuja todo cuando la imagen cargue
-};
+    const img = new Image();
+    img.src = "mapa.png"; // tu archivo de mapa en la misma carpeta
+    img.onload = () => {
+      dibujarOverlay();  // Redibuja todo cuando la imagen cargue
+    };
 
-// Sobrescribimos dibujarBackground para mostrar el mapa
-function dibujarBackground() {
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-}
-
-
-    // Por ahora dibujamos un fondito + grilla simple
+    // Fondo: dibuja el mapa (si no cargó todavía, fondo negro)
     function dibujarBackground() {
-      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      grad.addColorStop(0, "#111827");
-      grad.addColorStop(1, "#020617");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = "rgba(148,163,184,0.2)";
-      ctx.lineWidth = 1;
-      const step = 60;
-      for (let x = step; x < canvas.width; x += step) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = step; y < canvas.height; y += step) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
+      if (img.complete) {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
     }
 
@@ -189,7 +168,6 @@ function dibujarBackground() {
           `Punto de salto calculado:<br>
           &bull; Tirate aproximadamente al <strong>${porcentaje.toFixed(1)}%</strong> del recorrido del bus.<br>
           &bull; Coordenadas de salto (en el mapa): <strong>(${jumpPoint.x.toFixed(0)}, ${jumpPoint.y.toFixed(0)})</strong>.`;
-
       }
     }
 
