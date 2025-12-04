@@ -46,8 +46,9 @@
       border-radius: 0.75rem;
       border: 1px solid rgba(148,163,184,0.4);
       touch-action: manipulation;
-      /* el mapa va a tapar el fondo, esto es solo backup */
       background: #000;
+      max-width: 100%;
+      height: auto;
     }
     .info {
       font-size: 0.9rem;
@@ -93,7 +94,7 @@
 <body>
   <h1>Drop Calculator – Fortnite</h1>
   <p class="sub">
-    Click 1: inicio del bus · Click 2: final del bus · Click 3: spot de caída
+    Click izquierdo: puntos · Ruedita: zoom · Click derecho + arrastrar: mover mapa
   </p>
 
   <div class="wrapper">
@@ -118,35 +119,113 @@
     const estadoPill = document.getElementById("estadoPill");
     const resetBtn = document.getElementById("resetBtn");
 
-    let busStart = null;
+    let busStart = null; // coords en el mapa (espacio del mapa)
     let busEnd = null;
     let spot = null;
 
     // === Mapa real de Fortnite ===
     const img = new Image();
-    img.src = "mapa.png"; // tu archivo de mapa en la misma carpeta
+    img.src = "mapa.png"; // poné acá tu archivo (png/jpg/webp)
     img.onload = () => {
-      dibujarOverlay();  // Redibuja todo cuando la imagen cargue
+      // Ajustamos el canvas al tamaño real del mapa
+      canvas.width = img.width;
+      canvas.height = img.height;
+      dibujarOverlay();
     };
 
-    // Fondo: dibuja el mapa (si no cargó todavía, fondo negro)
-    function dibujarBackground() {
-      if (img.complete) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      } else {
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // === Zoom y pan ===
+    let scale = 1;
+    const MIN_SCALE = 0.6;
+    const MAX_SCALE = 3;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    let isPanning = false;
+    let startPanX = 0;
+    let startPanY = 0;
+    let startOffsetX = 0;
+    let startOffsetY = 0;
+
+    // Evitar menú contextual para click derecho
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    // Zoom con ruedita (scroll)
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+
+      const rect = canvas.getBoundingClientRect();
+      // Coordenadas del mouse en el canvas (tener en cuenta CSS scale)
+      const xCanvas = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const yCanvas = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+      // Coordenadas en el espacio del mapa (antes del cambio de zoom)
+      const worldX = (xCanvas - offsetX) / scale;
+      const worldY = (yCanvas - offsetY) / scale;
+
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      let newScale = scale * zoomFactor;
+
+      if (newScale < MIN_SCALE) newScale = MIN_SCALE;
+      if (newScale > MAX_SCALE) newScale = MAX_SCALE;
+
+      scale = newScale;
+
+      // Ajustar offset para que el punto bajo el cursor quede "fijo"
+      offsetX = xCanvas - worldX * scale;
+      offsetY = yCanvas - worldY * scale;
+
+      dibujarOverlay();
+    });
+
+    // Pan con click derecho
+    canvas.addEventListener("mousedown", (e) => {
+      if (e.button === 2) { // botón derecho
+        isPanning = true;
+        const rect = canvas.getBoundingClientRect();
+        startPanX = e.clientX;
+        startPanY = e.clientY;
+        startOffsetX = offsetX;
+        startOffsetY = offsetY;
       }
-    }
+    });
 
+    canvas.addEventListener("mousemove", (e) => {
+      if (!isPanning) return;
+      const rect = canvas.getBoundingClientRect();
+      const dxClient = e.clientX - startPanX;
+      const dyClient = e.clientY - startPanY;
+
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      offsetX = startOffsetX + dxClient * scaleX;
+      offsetY = startOffsetY + dyClient * scaleY;
+
+      dibujarOverlay();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isPanning = false;
+    });
+
+    // Dibuja mapa + línea del bus + puntos
     function dibujarOverlay() {
-      // Redibuja todo
-      dibujarBackground();
+      if (!img.complete) return;
 
-      // Dibujar bus
+      // Reset de transform y limpieza
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Aplicar zoom + pan
+      ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+
+      // Fondo: mapa
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
+      // Línea del bus
       if (busStart && busEnd) {
         ctx.strokeStyle = "#38bdf8";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2 / scale; // más fino al hacer zoom
         ctx.beginPath();
         ctx.moveTo(busStart.x, busStart.y);
         ctx.lineTo(busEnd.x, busEnd.y);
@@ -161,7 +240,6 @@
       // Punto de salto (si ya tenemos los 3)
       if (busStart && busEnd && spot) {
         const { jumpPoint, porcentaje } = calcularPuntoSalto(busStart, busEnd, spot);
-
         dibujarPunto(jumpPoint, "#a855f7", "J");
 
         infoText.innerHTML =
@@ -175,12 +253,12 @@
       if (!p) return;
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, 6 / scale, 0, Math.PI * 2); // 6/scale = tamaño más constante
       ctx.fill();
 
       ctx.fillStyle = "#e5e7eb";
-      ctx.font = "10px system-ui";
-      ctx.fillText(label, p.x + 8, p.y - 8);
+      ctx.font = `${10 / scale}px system-ui`;
+      ctx.fillText(label, p.x + 8 / scale, p.y - 8 / scale);
     }
 
     function calcularPuntoSalto(busStart, busEnd, spot) {
@@ -232,20 +310,25 @@
       }
     }
 
+    // Click izquierdo para marcar puntos (en coordenadas del mapa)
     canvas.addEventListener("click", (e) => {
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const xCanvas = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const yCanvas = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+      // Convertir de coords pantalla → coords mapa (inverso de transform)
+      const worldX = (xCanvas - offsetX) / scale;
+      const worldY = (yCanvas - offsetY) / scale;
 
       if (!busStart) {
-        busStart = { x, y };
+        busStart = { x: worldX, y: worldY };
       } else if (!busEnd) {
-        busEnd = { x, y };
+        busEnd = { x: worldX, y: worldY };
       } else if (!spot) {
-        spot = { x, y };
+        spot = { x: worldX, y: worldY };
       } else {
         // Si ya están los tres, volvemos a empezar por comodidad:
-        busStart = { x, y };
+        busStart = { x: worldX, y: worldY };
         busEnd = null;
         spot = null;
       }
@@ -262,8 +345,7 @@
       dibujarOverlay();
     });
 
-    // Inicial
-    dibujarBackground();
+    // Inicial (por si tarda en cargar la imagen)
     actualizarEstado();
   </script>
 </body>
