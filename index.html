@@ -122,16 +122,18 @@
     let busEnd = null;
     let spot = null;
 
-    // === Si querés usar un mapa real de Fortnite ===
-    // Descomentá este bloque y poné la URL de tu imagen:
-    /*
-    const img = new Image();
-    img.src = "tu_imagen_mapa.png";
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      dibujarOverlay();
-    };
-    */
+    // === Mapa real de Fortnite ===
+const img = new Image();
+img.src = "mapa.png"; // << tu imagen del mapa
+img.onload = () => {
+  dibujarOverlay();  // Redibuja todo cuando la imagen cargue
+};
+
+// Sobrescribimos dibujarBackground para mostrar el mapa
+function dibujarBackground() {
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+}
+
 
     // Por ahora dibujamos un fondito + grilla simple
     function dibujarBackground() {
